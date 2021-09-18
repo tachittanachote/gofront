@@ -99,7 +99,7 @@ class PassengerScreen extends PureComponent {
     }
 
     handleMarker = (region) => {
-        this.setState({ marker: region }, () => {
+        this.setState({ marker: region.coordinate }, () => {
             console.log([region])
             this.state.mapRef.fitToCoordinates([region.coordinate], {
                 animated: true,
@@ -153,7 +153,7 @@ class PassengerScreen extends PureComponent {
             }
         }).then((e) => {
             var driver = this.findCarInfo(this.state.selectedCarId);
-            this.setState({ travelInfo: e.data,
+            this.setState({ travelInfo: e.data, marker: driver.coordinates.destination,
                 mapViewDirection:
                     <MapViewDirections
                         origin={driver.coordinates.currentPosition}
@@ -203,7 +203,7 @@ class PassengerScreen extends PureComponent {
                             provider={PROVIDER_GOOGLE}
                             showsUserLocation={true}
                             initialRegion={this.state.coordinates}
-                            region={!this.state.marker ? this.state.coordinates : this.state.marker.coodinates}
+                            region={this.state.coordinates}
                             ref={(ref) => { this.state.mapRef = ref }}
                             followsUserLocation={true}
                         /*onPress={(e) => this.handleMarker(e.nativeEvent)}
@@ -211,14 +211,14 @@ class PassengerScreen extends PureComponent {
                          */
                         >
 
-                            {/*this.state.marker &&
+                            {this.state.marker &&
                             <Marker 
-                                coordinate={this.state.marker.coordinate}
+                                coordinate={this.state.marker}
                                 identifier={'marker'}
                             >
-                                <Image source={images.marker_icon} style={{...MAPS.imageSize}}></Image>    
+                                <Image source={images.marker_icon} style={{...MAPS.markerSize}}></Image>    
                             </Marker>
-                        */}
+                            }
 
                             {this.state.mapViewDirection && this.renderMapViewDirection()}
 

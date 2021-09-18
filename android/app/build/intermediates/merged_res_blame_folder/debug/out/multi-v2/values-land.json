@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/aek/Desktop/gofrond-app/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
+            "outputFile": "/Users/aek/Desktop/gofront/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
             "map": [
                 {
                     "source": "/Users/aek/.gradle/caches/transforms-3/d9a3ea39a981c7afa2f0112a00415ec8/transformed/material-1.1.0/res/values-land/values-land.xml",

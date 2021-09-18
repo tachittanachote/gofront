@@ -36,8 +36,6 @@ class DrivingScreen extends Component {
 
     componentDidMount = () => {
 
-        console.log(this.context.user)
-
         this.checkPassengerInterval = setInterval(this.getPassengers, 5000);
         this.pullInterval = setInterval(this.pull, 5000);
 
@@ -96,6 +94,9 @@ class DrivingScreen extends Component {
     }
 
     renderContent() {
+
+        console.log("render!")
+
         return (
             <View style={{
                 padding: SIZES.padding
@@ -126,10 +127,12 @@ class DrivingScreen extends Component {
     }
 
     pull = () => {
-        axios.post("/cars/pull").then((e) => {
-            console.log(e.data)
+        axios.post("/cars/pull", {
+            carId: this.context.user.id
+        }).then((e) => {
+            console.log("pulled", e.data)
         }).catch((e) => {
-            console.log(e)
+            console.log("pulled", e)
         })
     }
 
@@ -139,7 +142,12 @@ class DrivingScreen extends Component {
                 id: this.context.user.id
             }
         }).then((e) => {
-            this.setState({ passengers: e.data })
+            this.setState(prevState =>{
+                return{
+                     ...prevState,
+                     passengers : e.data
+                }
+             })
         }).catch((e) => {
             console.log(e)
         })
@@ -166,6 +174,7 @@ class DrivingScreen extends Component {
                             initialRegion={this.state.coordinates}
                             region={this.state.coordinates}
                         ></MapView>
+
                         <View
                             onStartShouldSetResponder={() => this.openPanel()}
                             style={{

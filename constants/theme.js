@@ -123,12 +123,12 @@ export const FONTS = {
 
 export const MAPS = {
     markerSize: {
-        height: 42,
-        width: 42,
+        height: 32,
+        width: 32,
     }, 
     carImageSize: {
-        height: 48,
-        width: 48,
+        height: 60,
+        width: 32,
     }
 }
 

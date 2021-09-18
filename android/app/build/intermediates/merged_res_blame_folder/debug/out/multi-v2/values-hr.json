@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/aek/Desktop/gofrond-app/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-hr/values-hr.xml",
+            "outputFile": "/Users/aek/Desktop/gofront/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-hr/values-hr.xml",
             "map": [
                 {
                     "source": "/Users/aek/.gradle/caches/transforms-3/c099f34bb597d03b4b670af755f47f98/transformed/jetified-play-services-base-17.0.0/res/values-hr/values.xml",
