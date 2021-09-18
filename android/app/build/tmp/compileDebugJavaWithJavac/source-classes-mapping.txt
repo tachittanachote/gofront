@@ -1,0 +1,14 @@
+com/gotogether/MainApplication.java
+ com.gotogether.MainApplication
+ com.gotogether.MainApplication$1
+com/gotogether/BuildConfig.java
+ com.gotogether.BuildConfig
+com/gotogether/MainActivity.java
+ com.gotogether.MainActivity
+com/gotogether/ReactNativeFlipper.java
+ com.gotogether.ReactNativeFlipper
+ com.gotogether.ReactNativeFlipper$1
+ com.gotogether.ReactNativeFlipper$2
+ com.gotogether.ReactNativeFlipper$2$1
+com/facebook/react/PackageList.java
+ com.facebook.react.PackageList

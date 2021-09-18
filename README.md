@@ -1,2 +1,1 @@
-# gofront
-gofront
+# gofrond-app
