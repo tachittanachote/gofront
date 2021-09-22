@@ -5,6 +5,7 @@ const slide_2 = require('../assets/images/slide_2.png');
 const slide_3 = require('../assets/images/slide_3.png');
 const marker_icon = require('../assets/images/marker_icon.png');
 const car_icon = require('../assets/images/car_icon.png');
+const passenger_icon = require('../assets/images/passenger_icon.png');
 
 export default {
     fancy_bottom,
@@ -14,4 +15,5 @@ export default {
     slide_3,
     marker_icon,
     car_icon,
+    passenger_icon,
 }

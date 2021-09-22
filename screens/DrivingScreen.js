@@ -131,7 +131,11 @@ class DrivingScreen extends Component {
             carId: this.context.user.id
         }).then((e) => {
             console.log("pulled", e.data)
-            this.state.bookingPassengers = e.data;
+            //this.state.bookingPassengers = e.data;
+            this.setState({
+                bookingPassengers: e.data
+            })
+            //console.log("log show state ---------------------- " + this.state.bookingPassengers);
         }).catch((e) => {
             console.log("pulled", e)
         })
@@ -143,8 +147,8 @@ class DrivingScreen extends Component {
                 id: this.context.user.id
             }
         }).then((e) => {
-            this.state.passengers = e.data;
-          // this.setState({passengers:e.data,})
+            //this.state.passengers = e.data;
+            this.setState({passengers:e.data,})
         }).catch((e) => {
             console.log(e)
         })
@@ -169,25 +173,27 @@ class DrivingScreen extends Component {
                             provider={PROVIDER_GOOGLE}
                             showsUserLocation={true}
                             initialRegion={this.state.coordinates}
-                            region={this.state.coordinates}
+                            //region={this.state.coordinates}
                         >
                         
-                            {this.state.bookingPassengers.length>0 && 
-                            this.state.bookingPassengers.map((passengers, index)=>{
-                            <Marker 
-                                coordinate={passengers.currentCoordinate}
-                               // key={index}   
-                            >
-                                <Image source={images.marker_icon} style={{...MAPS.markerSize}}></Image>    
-                            </Marker>
-                            })
-                            
-                            }
                         
                         
-                        
-                        
-                        
+                        {this.state.bookingPassengers !== null &&
+                            this.state.bookingPassengers
+                            .filter(bookingPassengers => bookingPassengers.id !== undefined)
+                            .map(
+                            (passenger, index) => (
+                                <Marker
+                                key={index}
+                                coordinate={
+                                    {
+                                    latitude: passenger.latitude,
+                                    longitude: passenger.longitude,
+                                }}>
+                                <Image source={images.passenger_icon} style={{...MAPS.markerSize}}></Image> 
+                                </Marker>
+                            ))}
+
                         </MapView>
 
                         <View
