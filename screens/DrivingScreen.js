@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Alert } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, Text, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Alert, Image } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-
 import { PassengerList, Preload } from '../components';
-import { COLORS, SIZES, FONTS } from '../constants';
+import { COLORS, SIZES, FONTS, images, MAPS } from '../constants';
 import { getDeltaCoordinates, requestGeolocationPermission } from '../utils';
 import { SwipeablePanel } from 'rn-swipeable-panel';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -27,7 +26,8 @@ class DrivingScreen extends Component {
                 onClose: () => this.closePanel(),
                 onPressCloseButton: () => this.closePanel(),
             },
-            passengers: []
+            passengers: [],
+            bookingPassengers: []
         }
         this.checkPassengerInterval = null;
         this.pullInterval = null;
@@ -131,6 +131,7 @@ class DrivingScreen extends Component {
             carId: this.context.user.id
         }).then((e) => {
             console.log("pulled", e.data)
+            this.state.bookingPassengers = e.data;
         }).catch((e) => {
             console.log("pulled", e)
         })
@@ -142,12 +143,8 @@ class DrivingScreen extends Component {
                 id: this.context.user.id
             }
         }).then((e) => {
-            this.setState(prevState =>{
-                return{
-                     ...prevState,
-                     passengers : e.data
-                }
-             })
+            this.state.passengers = e.data;
+          // this.setState({passengers:e.data,})
         }).catch((e) => {
             console.log(e)
         })
@@ -173,7 +170,25 @@ class DrivingScreen extends Component {
                             showsUserLocation={true}
                             initialRegion={this.state.coordinates}
                             region={this.state.coordinates}
-                        ></MapView>
+                        >
+                        
+                            {this.state.bookingPassengers.length>0 && 
+                            this.state.bookingPassengers.map((passengers, index)=>{
+                            <Marker 
+                                coordinate={passengers.currentCoordinate}
+                               // key={index}   
+                            >
+                                <Image source={images.marker_icon} style={{...MAPS.markerSize}}></Image>    
+                            </Marker>
+                            })
+                            
+                            }
+                        
+                        
+                        
+                        
+                        
+                        </MapView>
 
                         <View
                             onStartShouldSetResponder={() => this.openPanel()}
