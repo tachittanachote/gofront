@@ -12,6 +12,19 @@ class WaitScreen extends Component {
 
     static contextType = UserContext;
 
+    constructor(props){
+        super(props);
+        this.updateCurrentLocationInterval = null
+    }
+
+    componentDidMount = () =>{
+        this.updateCurrentLocationInterval = setInterval(this.updateCurrentLocation, 5000);
+    }
+
+    componentWillUnmount = () =>{
+        clearInterval(this.updateCurrentLocationInterval);
+    }
+
     handleCancelCall() {
         axios.post("/cars/cancelCall", {
             carId: this.props.route.params.driver.carId,
@@ -56,6 +69,32 @@ class WaitScreen extends Component {
         );
     }
     
+    updateCurrentLocation = () =>{
+        Geolocation.getCurrentPosition(
+            (position) => {
+                axios.post("/location/PassengerCurrentLocation", {
+                    passengerId: this.context.user.id,
+                    currentPosition: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                }).then((e) => {
+                    if (e.data === "success") {
+                        console.log('UPDATE WORKING')
+                    }
+                }).catch((e) => {
+                    console.log(e)
+                })
+            },
+            (error) => {
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+    }
+
+
+
     render() {
         return (
             <SafeAreaView style={styles.container}>

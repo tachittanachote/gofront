@@ -31,6 +31,7 @@ class DrivingScreen extends Component {
         }
         this.checkPassengerInterval = null;
         this.pullInterval = null;
+        this.updateCurrentLocationInterval = null;
         this.dropPassenger = this.dropPassenger.bind(this);
     }
 
@@ -38,6 +39,7 @@ class DrivingScreen extends Component {
 
         this.checkPassengerInterval = setInterval(this.getPassengers, 5000);
         this.pullInterval = setInterval(this.pull, 5000);
+        this.updateCurrentLocationInterval = setInterval(this.updateCurrentLocation, 5000);
 
         requestGeolocationPermission().then((e) => {
             Geolocation.getCurrentPosition(
@@ -72,25 +74,64 @@ class DrivingScreen extends Component {
         })
     }
 
+
+    updateCurrentLocation = () =>{
+        Geolocation.getCurrentPosition(
+            (position) => {
+                this.setState({ coordinates: getDeltaCoordinates(position.coords.latitude, position.coords.longitude, position.coords.accuracy) });
+                axios.post("/location/DriverCurrentLocation", {
+                    carId: this.context.user.id,
+                    currentPosition: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                }).then((e) => {
+                    if (e.data === "success") {
+                        console.log('UPDATE WORKING')
+                    }
+                }).catch((e) => {
+                    console.log(e)
+                })
+            },
+            (error) => {
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+    }
+
+
+
     dropPassenger = async (passengerId) => {
 
         var user = await axios.post("/user/" + passengerId);
 
         console.log("DropUserID", user.data),
 
-        axios.post("/cars/dropPassenger", {
-            carId: this.context.user.id,
-            passenger: {
-                id: passengerId,
-                passengerName: user.data.first_name
-            }
-        }).then((e) => {
-            if (e.data === "success") {
-                Alert.alert("สำเร็จ")
-            }
-        }).catch((e) => {
-            console.log(e)
-        })
+        Geolocation.getCurrentPosition(
+            (position) => {
+                axios.post("/cars/dropPassenger", {
+                    carId: this.context.user.id,
+                    passenger: {
+                        id: passengerId,
+                        passengerName: user.data.first_name,
+                        endLat:position.coords.latitude,
+                        endLong:position.coords.longitude
+                    }
+                }).then((e) => {
+                    if (e.data === "success") {
+                        Alert.alert("สำเร็จ")
+                    }
+                }).catch((e) => {
+                    console.log(e)
+                })
+            },
+            (error) => {
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+        
     }
 
     renderContent() {
@@ -130,12 +171,19 @@ class DrivingScreen extends Component {
         axios.post("/cars/pull", {
             carId: this.context.user.id
         }).then((e) => {
-            console.log("pulled", e.data)
-            //this.state.bookingPassengers = e.data;
-            this.setState({
-                bookingPassengers: e.data
-            })
-            //console.log("log show state ---------------------- " + this.state.bookingPassengers);
+            if(e.status !== 200){
+                this.setState({
+                    bookingPassengers: []
+                })
+            }else{
+                console.log("pulled", e.data)
+                //this.state.bookingPassengers = e.data;
+                this.setState({
+                    bookingPassengers: e.data
+                })
+                //console.log("log show state ---------------------- " + this.state.bookingPassengers);
+            }
+            
         }).catch((e) => {
             console.log("pulled", e)
         })
@@ -157,6 +205,7 @@ class DrivingScreen extends Component {
     componentWillUnmount = () => {
         clearInterval(this.checkPassengerInterval);
         clearInterval(this.pullInterval);
+        clearInterval(this.updateCurrentLocationInterval);
     }
 
     render() {
@@ -176,9 +225,10 @@ class DrivingScreen extends Component {
                             //region={this.state.coordinates}
                         >
                         
+
                         
-                        
-                        {this.state.bookingPassengers !== null &&
+                        {//this.state.bookingPassengers.length>0 &&
+                        this.state.bookingPassengers!==null &&
                             this.state.bookingPassengers
                             .filter(bookingPassengers => bookingPassengers.id !== undefined)
                             .map(
