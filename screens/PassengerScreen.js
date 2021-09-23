@@ -234,8 +234,6 @@ class PassengerScreen extends PureComponent {
                             )
                             }
 
-
-
                         </MapView>
 
                         {this.state.driverInformation === null ?
