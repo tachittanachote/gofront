@@ -23,6 +23,9 @@ class TravelScreen extends Component {
     }
 
     componentDidMount = () => {
+
+        console.log("SOAkopdSDKAJDAOSDJASD ",this.props.route.params.driver)
+
         this.getPlaceDestinationName()
         this.invoiceInterval = setInterval(() => {
             this.getBill()
@@ -186,7 +189,7 @@ class TravelScreen extends Component {
                 }}>
                     <Title title="ข้อมูลการเดินทางในขณะนี้"></Title>
                     <HorizontalLine></HorizontalLine>
-                    <DriverInformation driver={this.props.route.params.driver} onCallBack={(e) => console.log(e)}></DriverInformation>
+                    {/* <DriverInformation driver={this.props.route.params.driver} onCallBack={(e) => console.log(e)}></DriverInformation> */}
                     <View style={{
                         marginTop: 15,
                     }}>
