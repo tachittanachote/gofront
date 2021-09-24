@@ -41,7 +41,7 @@ build/Release
 node_modules/
 jspm_packages/
 
-android/
+gofront/android/
 android/build/
 android/app/build/*
 
@@ -49,6 +49,8 @@ android/gradle.properties
 android/local.properties
 
 android/.gradle/*
+.gradle
+/android/
 
 # TypeScript v1 declaration files
 typings/
