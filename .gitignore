@@ -45,6 +45,11 @@ android/
 android/build/
 android/app/build/*
 
+android/gradle.properties
+android/local.properties
+
+android/.gradle/*
+
 # TypeScript v1 declaration files
 typings/
 
@@ -107,6 +112,6 @@ dist
 # TernJS port file
 .tern-port
 
-android/gradle.properties
-android/local.properties
+
+
 
