@@ -48,13 +48,10 @@ android/app/build/*
 android/gradle.properties
 android/local.properties
 
-android/app/
-android/gradle/
-
 android/.gradle/*
-android/.build/*
-.gradle
-/android/
+
+android/gradle.properties
+android/local.properties
 
 # TypeScript v1 declaration files
 typings/
