@@ -41,6 +41,10 @@ build/Release
 node_modules/
 jspm_packages/
 
+android/
+android/build/
+android/app/build/*
+
 # TypeScript v1 declaration files
 typings/
 
@@ -106,5 +110,3 @@ dist
 android/gradle.properties
 android/local.properties
 
-android/build/
-android/app/build/*
