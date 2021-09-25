@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 // @react-native-community/geolocation
 import com.reactnativecommunity.geolocation.GeolocationPackage;
+// @react-native-picker/picker
+import com.reactnativecommunity.picker.RNCPickerPackage;
 // react-native-fast-image
 import com.dylanvann.fastimage.FastImageViewPackage;
 // react-native-gesture-handler
@@ -73,6 +75,7 @@ public class PackageList {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
       new GeolocationPackage(),
+      new RNCPickerPackage(),
       new FastImageViewPackage(),
       new RNGestureHandlerPackage(),
       new MapsPackage(),

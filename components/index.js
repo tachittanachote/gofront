@@ -9,6 +9,9 @@ import Title from "./Title";
 import SuggestionPlace from "./SuggestionPlace";
 import CircleMenu from "./CircleMenu";
 import PassengerList from "./PassengerList";
+import DriverFilter from "./DriverFilter";
+import PassengerFilter from "./PassengerFilter";
+import Slider from "./Slider";
 
 export {
     AppHeader,
@@ -21,5 +24,8 @@ export {
     Title,
     SuggestionPlace,
     CircleMenu,
-    PassengerList
+    PassengerList,
+    DriverFilter,
+    PassengerFilter,
+    Slider,
 }

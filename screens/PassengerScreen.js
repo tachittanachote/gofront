@@ -5,7 +5,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import Geolocation from '@react-native-community/geolocation';
 
 import { getDeltaCoordinates, requestGeolocationPermission } from '../utils';
-import { BackButton, HorizontalLine, Note, Preload, DriverInformation, Title } from '../components';
+import { BackButton, HorizontalLine, Note, Preload, DriverInformation, Title, PassengerFilter } from '../components';
 import { COLORS, FONTS, GOOGLE_API_KEY, images, MAPS, SIZES } from '../constants';
 import axios from 'axios';
 import { UserContext } from '../context';
@@ -193,6 +193,7 @@ class PassengerScreen extends PureComponent {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <BackButton navigation={this.props.navigation}></BackButton>
+                <PassengerFilter></PassengerFilter>
                 {this.state.coordinates === null ?
                     <Preload></Preload>
                     :

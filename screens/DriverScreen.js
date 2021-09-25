@@ -6,12 +6,11 @@ import { Icon } from 'react-native-elements';
 import MapViewDirections from 'react-native-maps-directions'
 
 import { getDeltaCoordinates, requestGeolocationPermission } from '../utils';
-import { Preload, BackButton, Title, SuggestionPlace, HorizontalLine } from '../components';
+import { Preload, BackButton, Title, SuggestionPlace, HorizontalLine, DriverFilter } from '../components';
 import { COLORS, FONTS, GOOGLE_API_KEY, images, MAPS, SIZES } from '../constants';
 import { ScrollView } from 'react-native-gesture-handler';
 import axios from 'axios';
 import UserContext from '../context/UserProvider';
-
 
 class DriverScreen extends PureComponent {
 
@@ -97,6 +96,7 @@ class DriverScreen extends PureComponent {
                 })
             }
         })
+
         if (!state) {
             this.setState({ mapViewDirection: null, marker: null, destination: null })
         }
@@ -199,6 +199,7 @@ class DriverScreen extends PureComponent {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <BackButton navigation={this.props.navigation}></BackButton>
+                <DriverFilter></DriverFilter>
                 {this.state.coordinates === null ?
                     <Preload></Preload>
                     :

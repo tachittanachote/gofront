@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, View, StyleSheet } from 'react-native';
+import { SafeAreaView, Text, View, StyleSheet, ScrollView, Image} from 'react-native';
 import { Icon } from 'react-native-elements';
 import axios from 'axios';
 import Geolocation from '@react-native-community/geolocation';
 
-import { CircleMenu } from '../components';
+import { CircleMenu, Slider } from '../components';
 import MenuButton from '../components/MenuButton';
 import { COLORS, FONTS, SIZES } from '../constants';
 import { UserContext } from '../context';
@@ -29,7 +29,7 @@ class Lobby extends Component {
         //check user is traveling
         axios.post('/user/state').then((e) => {
             console.log(e.data[0])
-            switch(e.data[0].state) {
+            switch (e.data[0].state) {
                 case "WAIT": {
                     this.props.navigation.navigate("WaitScreen", {
                         driver: e.data[0].driver,
@@ -230,7 +230,9 @@ class Lobby extends Component {
                         What's news?
                     </Text>
                 </View>
-                {/* <Slider></Slider> */}
+
+                <Slider></Slider>
+
             </SafeAreaView>
         );
     }
