@@ -15,6 +15,10 @@ class UserProvider extends Component {
   }
 
   componentDidMount = () => {
+   this.getProfile();
+  }
+
+  getProfile = () => {
     axios.post('/user').then((e) => {
       this.setState({ user: e.data, isAuthenticated: !_.isEmpty(e.data) });
     }).catch((e) => {
@@ -22,11 +26,15 @@ class UserProvider extends Component {
     })
   }
 
+  updateContext = () => {
+    this.getProfile();
+  }
+
   render() {
     return (
       <>
         {!_.isEmpty(this.state.user) ?
-          <UserContext.Provider value={{ user: this.state.user }}>
+          <UserContext.Provider value={{ user: this.state.user, updateContext:this.updateContext }}>
             {this.props.children}
           </UserContext.Provider>
         :

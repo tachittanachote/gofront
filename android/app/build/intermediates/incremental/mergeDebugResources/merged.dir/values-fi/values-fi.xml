@@ -27,6 +27,7 @@
     <string msgid="2650565705514630347" name="abc_shareactionprovider_share_with">"Jaa…"</string>
     <string msgid="9009661856846212431" name="abc_shareactionprovider_share_with_application">"Jaa: <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
     <string msgid="6389460216547290468" name="abc_toolbar_collapse_description">"Tiivistä"</string>
+    <string name="ampm_description">Valitse am/pm</string>
     <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"Ota käyttöön"</string>
     <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> ei toimi, ellet ota Google Play Palveluita käyttöön."</string>
     <string msgid="3147157405986503375" name="common_google_play_services_enable_title">"Ota Google Play Palvelut käyttöön"</string>
@@ -45,6 +46,24 @@
     <string msgid="5201977337835724196" name="common_open_on_phone">"Avaa puhelimessa"</string>
     <string msgid="3441753203274453993" name="common_signin_button_text">"Kirjaudu sisään"</string>
     <string msgid="669893613918351210" name="common_signin_button_text_long">"Kirjaudu Google-tilille"</string>
+    <string name="date_description">Valitse Päivämäärä</string>
+    <string name="day_description">Valitse Päivä</string>
+    <string name="hour_description">Valitse Tunti</string>
+    <string name="hour_tag">Tunti:</string>
+    <string name="minutes_description">Valitse Minuutit</string>
+    <string name="minutes_tag">Minuutit</string>
+    <string name="month_description">Valitse Kuukausi</string>
+    <string name="overlay">Päivämääränvalitsimen päällekkäin</string>
     <string msgid="730395136688082741" name="search_menu_title">"Haku"</string>
+    <string name="selected_ampm_description">Valittu am/pm</string>
+    <string name="selected_date_description">Valittu Päivämäärä</string>
+    <string name="selected_day_description">Valittu Päivä</string>
+    <string name="selected_hour_description">Valittu Tunti</string>
+    <string name="selected_minutes_description">Valitut Minuutit</string>
+    <string name="selected_month_description">Valittu Kuukausi</string>
+    <string name="selected_value_description">Arvo on</string>
+    <string name="selected_year_description">Valittu Vuosi</string>
     <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="time_tag">Kello on</string>
+    <string name="year_description">Valitse Vuosi</string>
 </resources>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from "react-native-splash-screen";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   Home,
@@ -18,12 +19,21 @@ import {
   DrivingScreen,
 } from './screens';
 import { UserProvider } from './context';
+import axios from 'axios';
 
 const Stack = createStackNavigator();
 
 class App extends Component {
 
   componentDidMount() {
+    axios.post('/device/check'
+    ).then((e) => {
+      console.log(e.data.device_id, "get from device check")
+      AsyncStorage.setItem("device_id", e.data.device_id); 
+      AsyncStorage.setItem("device_token", e.data.device_token);
+    }).catch((e) => {
+      console.log(e)
+    })
     SplashScreen.hide();
   }
 
@@ -36,7 +46,7 @@ class App extends Component {
               headerShown: false,
               cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
             }}
-            initialRouteName="Lobby">
+            initialRouteName="RequestOtp">
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />

@@ -1,12 +1,28 @@
+<<<<<<< HEAD
 #Sat Sep 25 15:10:55 ICT 2021
+=======
+<<<<<<< HEAD
+#Sat Sep 25 17:52:40 ICT 2021
+path.4=2/classes.dex
+path.3=14/classes.dex
+path.2=0/classes.dex
+=======
+#Fri Sep 24 09:15:26 ICT 2021
+>>>>>>> 3d194285101b15ce2e2d4d74611bfeda21176361
+>>>>>>> 95c9a3be0de19819faedc5b96ce1c7b5d74e8af0
 path.1=0/classes.dex
+path.5=classes2.dex
 path.0=classes.dex
-renamed.5=classes6.dex
-renamed.4=classes5.dex
+base.4=C\:\\Users\\MaxPong\\Documents\\Github project\\gofront\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\2\\classes.dex
+base.3=C\:\\Users\\MaxPong\\Documents\\Github project\\gofront\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\14\\classes.dex
+base.2=C\:\\Users\\MaxPong\\Documents\\Github project\\gofront\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.1=C\:\\Users\\MaxPong\\Documents\\Github project\\gofront\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
+base.0=C\:\\Users\\MaxPong\\Documents\\Github project\\gofront\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 renamed.3=classes4.dex
 renamed.2=classes3.dex
 renamed.1=classes2.dex
 renamed.0=classes.dex
+<<<<<<< HEAD
 base.5=/Users/aek/Desktop/gofront/android/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
 base.4=/Users/aek/Desktop/gofront/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/2/classes.dex
 base.3=/Users/aek/Desktop/gofront/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex
@@ -17,3 +33,8 @@ path.5=classes2.dex
 path.4=2/classes.dex
 path.3=14/classes.dex
 path.2=0/classes.dex
+=======
+renamed.5=classes6.dex
+renamed.4=classes5.dex
+base.5=C\:\\Users\\MaxPong\\Documents\\Github project\\gofront\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+>>>>>>> 95c9a3be0de19819faedc5b96ce1c7b5d74e8af0
