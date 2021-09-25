@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\SeniorProject\\gofront\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-small-v4\\values-small-v4.xml",
+            "outputFile": "C:\\Users\\MaxPong\\Documents\\Github project\\gofront\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-small-v4\\values-small-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Top\\.gradle\\caches\\transforms-3\\d9a3ea39a981c7afa2f0112a00415ec8\\transformed\\material-1.1.0\\res\\values-small-v4\\values-small-v4.xml",
+                    "source": "C:\\Users\\MaxPong\\.gradle\\caches\\transforms-3\\d9a3ea39a981c7afa2f0112a00415ec8\\transformed\\material-1.1.0\\res\\values-small-v4\\values-small-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

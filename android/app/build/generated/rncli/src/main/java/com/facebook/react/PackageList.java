@@ -11,8 +11,14 @@ import com.facebook.react.shell.MainReactPackage;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+// @react-native-async-storage/async-storage
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // @react-native-community/geolocation
 import com.reactnativecommunity.geolocation.GeolocationPackage;
+// @react-native-picker/picker
+import com.reactnativecommunity.picker.RNCPickerPackage;
+// react-native-date-picker
+import com.henninghall.date_picker.DatePickerPackage;
 // react-native-fast-image
 import com.dylanvann.fastimage.FastImageViewPackage;
 // react-native-gesture-handler
@@ -72,7 +78,10 @@ public class PackageList {
   public ArrayList<ReactPackage> getPackages() {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
+      new AsyncStoragePackage(),
       new GeolocationPackage(),
+      new RNCPickerPackage(),
+      new DatePickerPackage(),
       new FastImageViewPackage(),
       new RNGestureHandlerPackage(),
       new MapsPackage(),
