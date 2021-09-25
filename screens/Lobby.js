@@ -28,21 +28,24 @@ class Lobby extends Component {
     checkTravelState = () => {
         //check user is traveling
         axios.post('/user/state').then((e) => {
-            switch (e.data) {
-                case 1: { //None state
+            console.log(e.data[0])
+            switch(e.data[0].state) {
+                case "WAIT": {
+                    this.props.navigation.navigate("WaitScreen", {
+                        driver: e.data[0].driver,
+                        driverTravelInfo: e.data[0].driver.coordinates,
+                    })
                     break;
                 }
-                case 2: { //Booking state
-                    break;
-                }
-                case 3: { //Traveling state
-                    break;
-                }
-                case 4: { //Driving state
+                case "TRAVEL": {
+                    this.props.navigation.navigate("TravelScreen", {
+                        driver: e.data[0].driver,
+                        driverTravelInfo: e.data[0].driver.coordinates,
+                    })
                     break;
                 }
                 default: {
-                    break;
+
                 }
             }
         }).catch((e) => {

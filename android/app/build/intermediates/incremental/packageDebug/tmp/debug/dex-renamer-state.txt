@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 #Sat Sep 25 17:52:40 ICT 2021
 path.4=2/classes.dex
 path.3=14/classes.dex
 path.2=0/classes.dex
+=======
+#Fri Sep 24 09:15:26 ICT 2021
+>>>>>>> 3d194285101b15ce2e2d4d74611bfeda21176361
 path.1=0/classes.dex
 path.5=classes2.dex
 path.0=classes.dex

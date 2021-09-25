@@ -41,6 +41,18 @@ build/Release
 node_modules/
 jspm_packages/
 
+gofront/android/
+android/build/
+android/app/build/*
+
+android/gradle.properties
+android/local.properties
+
+android/.gradle/*
+
+android/gradle.properties
+android/local.properties
+
 # TypeScript v1 declaration files
 typings/
 
@@ -103,8 +115,6 @@ dist
 # TernJS port file
 .tern-port
 
-android/gradle.properties
-android/local.properties
 
-android/build/
-android/app/build/*
+
+
