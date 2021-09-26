@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Alert, Image, ScrollView } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import { PassengerList, Preload } from '../components';
+import { Preload } from '../components';
 import { COLORS, SIZES, FONTS, images, MAPS } from '../constants';
 import { getDeltaCoordinates, requestGeolocationPermission } from '../utils';
 import { SwipeablePanel } from 'rn-swipeable-panel';
@@ -113,6 +113,8 @@ class DrivingScreen extends Component {
 
     dropPassenger = async (passengerId) => {
 
+        console.log("Clicked Drop ID", passengerId)
+
         var user = await axios.post("/user/" + passengerId, {}, {
             headers: {
                 authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
@@ -161,7 +163,20 @@ class DrivingScreen extends Component {
             }}>
                 <ScrollView>
                     {this.state.passengers.length > 0 && this.state.passengers.map((passenger, index) => (
-                        <PassengerList key={index} onDrop={(e) => this.dropPassenger(e)} passenger={passenger}></PassengerList>
+                        <TouchableWithoutFeedback key={index} onPress={() => this.dropPassenger(passenger.passengerInfo.passengerId)}>
+                            <View style={{
+                                borderRadius: SIZES.radius - 5,
+                                backgroundColor: COLORS.primary,
+                                padding: SIZES.padding * 1.5,
+                                marginTop: SIZES.margin,
+                            }}>
+                                <Text style={{
+                                    textAlign: 'center',
+                                    color: COLORS.white,
+                                    ...FONTS.h5
+                                }}>{passenger.passengerInfo.passengerName}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                     ))
                     }
                     <TouchableWithoutFeedback onPress={() => this.reachDestination()}>
@@ -220,6 +235,7 @@ class DrivingScreen extends Component {
                 authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
+            console.log(e.data, "P IN C")
             //this.state.passengers = e.data;
             this.setState({ passengers: e.data, })
         }).catch((e) => {

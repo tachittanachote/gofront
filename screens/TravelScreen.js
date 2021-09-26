@@ -30,25 +30,36 @@ class TravelScreen extends Component {
         this.getPlaceDestinationName()
         this.invoiceInterval = setInterval(() => {
             this.getBill()
-            var driver = this.props.route.params.driverTravelInfo;
+            
+            
+            axios.post('/driver/current', {}, {
+                headers: {
+                    authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                }
+            }).then((res) => {
 
-            Geolocation.getCurrentPosition(
-                (position) => {
-                    var origin = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                    }
-                    var destination = {
-                        latitude: driver.destination.latitude,
-                        longitude: driver.destination.longitude,
-                    }
-                    this.getRemainingDistance(origin, destination);
-                },
-                (error) => {
-                    console.log(error.code, error.message);
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            );
+                console.log(res.data, "Current")
+
+                Geolocation.getCurrentPosition(
+                    (position) => {
+                        var origin = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                        }
+                        var destination = {
+                            latitude: res.data.latitude,
+                            longitude: res.data.longitude,
+                        }
+                        this.getRemainingDistance(origin, destination);
+                    },
+                    (error) => {
+                        console.log(error.code, error.message);
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            }).catch((e) => {
+                console.log(e)
+            })
 
         }, 5000);
     }
