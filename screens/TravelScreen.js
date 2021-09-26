@@ -32,7 +32,9 @@ class TravelScreen extends Component {
             this.getBill()
             
             
-            axios.post('/driver/current', {}, {
+            axios.post('/location/driver/current', {
+                driverId: this.props.route.params.driver.carId,
+            }, {
                 headers: {
                     authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
                 }
