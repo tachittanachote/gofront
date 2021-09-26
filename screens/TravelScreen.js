@@ -42,23 +42,18 @@ class TravelScreen extends Component {
 
                 console.log(res.data, "Current")
 
-                Geolocation.getCurrentPosition(
-                    (position) => {
-                        var origin = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                        }
-                        var destination = {
-                            latitude: res.data.latitude,
-                            longitude: res.data.longitude,
-                        }
-                        this.getRemainingDistance(origin, destination);
-                    },
-                    (error) => {
-                        console.log(error.code, error.message);
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-                );
+                var destination = {
+                    latitude: res.data.destination.latitude,
+                    longitude: res.data.destination.longitude,
+                }
+
+                var origin = {
+                    latitude: res.data.currentPosition.latitude,
+                    longitude: res.data.currentPosition.longitude,
+                }
+
+                this.getRemainingDistance(origin, destination);
+
             }).catch((e) => {
                 console.log(e)
             })
