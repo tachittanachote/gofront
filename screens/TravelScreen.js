@@ -28,7 +28,7 @@ class TravelScreen extends Component {
         console.log("SOAkopdSDKAJDAOSDJASD ",this.props.route.params.driver)
 
         this.getPlaceDestinationName()
-        this.invoiceInterval = setInterval(() => {
+        this.invoiceInterval = setInterval( async() => {
             this.getBill()
             
             
