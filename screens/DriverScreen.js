@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, TouchableWithoutFeedback, Image, TextInput } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TouchableWithoutFeedback, Image, TextInput, ScrollView} from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { Icon } from 'react-native-elements';
@@ -8,7 +8,7 @@ import MapViewDirections from 'react-native-maps-directions'
 import { getDeltaCoordinates, requestGeolocationPermission } from '../utils';
 import { Preload, BackButton, Title, SuggestionPlace, HorizontalLine, DriverFilter } from '../components';
 import { COLORS, FONTS, GOOGLE_API_KEY, images, MAPS, SIZES } from '../constants';
-import { ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import UserContext from '../context/UserProvider';
 
@@ -44,7 +44,7 @@ class DriverScreen extends PureComponent {
     }
 
     handleDestination(state) {
-        this.setState({ destination: state }, () => {
+        this.setState({ destination: state }, async () => {
             if (this.state.destination !== true && this.state.destination !== null) {
 
                 var coordinate = {
@@ -78,6 +78,10 @@ class DriverScreen extends PureComponent {
                 
                 axios.post('/location/place', {
                     coordinates: this.state.marker
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                    }
                 }).then((e) => {  
 
                     console.log("assgining")
@@ -128,12 +132,16 @@ class DriverScreen extends PureComponent {
         })
     }
 
-    getNearbyPlace = (latitude, longitude) => {
+    getNearbyPlace = async(latitude, longitude) => {
         axios.post("/location/nearby", {
             radius: 50000,
             coordinates: {
                 latitude: latitude,
                 longitude: longitude
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
 
@@ -143,11 +151,15 @@ class DriverScreen extends PureComponent {
                 e.data[e.data.length - 3]
             ]
 
-            nearby.forEach((place) => {
+            nearby.forEach(async(place) => {
                 axios.post('/location/place', {
                     coordinates: {
                         latitude: place.geometry.location.lat,
                         longitude: place.geometry.location.lng
+                    }
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
                     }
                 }).then((e) => {
 
@@ -169,11 +181,13 @@ class DriverScreen extends PureComponent {
         return this.state.mapViewDirection;
     }
 
-    handleStart = () => {
+    handleStart = async () => {
+
+        console.log("Start!!!")
         
         axios.post("/cars/start", {
             driver: {
-                id: this.context.user.id,
+                id: this.context.user.user_id,
                 name: this.context.user.first_name,
                 currentLat: this.state.coordinates.latitude,
                 currentLong: this.state.coordinates.longitude,
@@ -186,7 +200,12 @@ class DriverScreen extends PureComponent {
                     seat: 4 //Context  
                 }
             }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
         }).then((e) => {
+            console.log(e.data)
             if(e.data === "success") {
                 this.props.navigation.navigate("DrivingScreen")
             }

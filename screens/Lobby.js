@@ -8,6 +8,7 @@ import { CircleMenu, Slider } from '../components';
 import MenuButton from '../components/MenuButton';
 import { COLORS, FONTS, SIZES } from '../constants';
 import { UserContext } from '../context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Lobby extends Component {
 
@@ -25,10 +26,15 @@ class Lobby extends Component {
         this.getCurrentPlaceName();
     }
 
-    checkTravelState = () => {
+    checkTravelState = async () => {
+
         //check user is traveling
-        axios.post('/user/state').then((e) => {
-            console.log(e.data[0])
+        axios.post('/user/state', {}, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
+        }).then((e) => {
+            console.log(e.data, "Lobby")
             switch (e.data[0].state) {
                 case "WAIT": {
                     this.props.navigation.navigate("WaitScreen", {
@@ -49,19 +55,23 @@ class Lobby extends Component {
                 }
             }
         }).catch((e) => {
-            console.log(e)
+            console.log("State",e)
         })
     }
 
     getCurrentPlaceName = () => {
         Geolocation.getCurrentPosition(
-            (position) => {
+           async (position) => {
                 var coordinates = {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                 }
                 axios.post('/location/place', {
                     coordinates: coordinates
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                    }
                 }).then((e) => {
 
                     var address = e.data.formatted_address.split(",")
@@ -74,7 +84,7 @@ class Lobby extends Component {
 
                     this.setState({ place: placeInfo });
                 }).catch((e) => {
-                    console.log(e)
+                    console.log("Place",e)
                 })
             },
             (error) => {

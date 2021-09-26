@@ -1,6 +1,5 @@
 import AppHeader from "./AppHeader";
 import BackButton from "./BackButton";
-import ContiuneButton from "./ContinueButton";
 import Preload from "./Preload";
 import HorizontalLine from "./HorizontalLine";
 import Note from "./Note";
@@ -16,7 +15,6 @@ import Slider from "./Slider";
 export {
     AppHeader,
     BackButton,
-    ContiuneButton,
     Preload,
     HorizontalLine,
     Note,

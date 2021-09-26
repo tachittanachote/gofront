@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableWithoutFeedback, Alert, Image, ScrollView } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { PassengerList, Preload } from '../components';
 import { COLORS, SIZES, FONTS, images, MAPS } from '../constants';
 import { getDeltaCoordinates, requestGeolocationPermission } from '../utils';
 import { SwipeablePanel } from 'rn-swipeable-panel';
-import { ScrollView } from 'react-native-gesture-handler';
 import axios from 'axios';
 import UserContext from '../context/UserProvider';
+import Modal from "react-native-modal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class DrivingScreen extends Component {
 
@@ -62,9 +63,13 @@ class DrivingScreen extends Component {
         this.setState({ isPanelActive: false, dashboardDisplay: "flex" });
     };
 
-    reachDestination = () => {
+    reachDestination = async () => {
         axios.post("/cars/done", {
-            carId: this.context.user.id
+            carId: this.context.user.user_id
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
         }).then((e) => {
             if (e.data === "success") {
                 this.props.navigation.navigate("Lobby")
@@ -75,15 +80,19 @@ class DrivingScreen extends Component {
     }
 
 
-    updateCurrentLocation = () =>{
+    updateCurrentLocation = () => {
         Geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 this.setState({ coordinates: getDeltaCoordinates(position.coords.latitude, position.coords.longitude, position.coords.accuracy) });
                 axios.post("/location/DriverCurrentLocation", {
-                    carId: this.context.user.id,
+                    carId: this.context.user.user_id,
                     currentPosition: {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude
+                    }
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
                     }
                 }).then((e) => {
                     if (e.data === "success") {
@@ -108,30 +117,34 @@ class DrivingScreen extends Component {
 
         console.log("DropUserID", user.data),
 
-        Geolocation.getCurrentPosition(
-            (position) => {
-                axios.post("/cars/dropPassenger", {
-                    carId: this.context.user.id,
-                    passenger: {
-                        id: passengerId,
-                        passengerName: user.data.first_name,
-                        endLat:position.coords.latitude,
-                        endLong:position.coords.longitude
-                    }
-                }).then((e) => {
-                    if (e.data === "success") {
-                        Alert.alert("สำเร็จ")
-                    }
-                }).catch((e) => {
-                    console.log(e)
-                })
-            },
-            (error) => {
-                console.log(error.code, error.message);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
-        
+            Geolocation.getCurrentPosition(
+                async (position) => {
+                    axios.post("/cars/dropPassenger", {
+                        carId: this.context.user.user_id,
+                        passenger: {
+                            id: passengerId,
+                            passengerName: user.data.first_name,
+                            endLat: position.coords.latitude,
+                            endLong: position.coords.longitude
+                        }
+                    }, {
+                        headers: {
+                            authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                        }
+                    }).then((e) => {
+                        if (e.data === "success") {
+                            Alert.alert("สำเร็จ")
+                        }
+                    }).catch((e) => {
+                        console.log(e)
+                    })
+                },
+                (error) => {
+                    console.log(error.code, error.message);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+
     }
 
     renderContent() {
@@ -167,15 +180,19 @@ class DrivingScreen extends Component {
         )
     }
 
-    pull = () => {
+    pull = async () => {
         axios.post("/cars/pull", {
-            carId: this.context.user.id
+            carId: this.context.user.user_id
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
         }).then((e) => {
-            if(e.status !== 200){
+            if (e.status !== 200) {
                 this.setState({
                     bookingPassengers: []
                 })
-            }else{
+            } else {
                 console.log("pulled", e.data)
                 //this.state.bookingPassengers = e.data;
                 this.setState({
@@ -183,20 +200,24 @@ class DrivingScreen extends Component {
                 })
                 //console.log("log show state ---------------------- " + this.state.bookingPassengers);
             }
-            
+
         }).catch((e) => {
             console.log("pulled", e)
         })
     }
 
-    getPassengers = () => {
+    getPassengers = async () => {
         axios.post('/cars/checkPassengersInfo', {
             driver: {
-                id: this.context.user.id
+                id: this.context.user.user_id
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
             //this.state.passengers = e.data;
-            this.setState({passengers:e.data,})
+            this.setState({ passengers: e.data, })
         }).catch((e) => {
             console.log(e)
         })
@@ -217,32 +238,108 @@ class DrivingScreen extends Component {
                     <View style={{
                         flex: 1,
                     }}>
+
+                        <Modal
+                            isVisible={false}
+                            animationIn="slideInDown"
+                            animationOut="slideOutUp"
+                        >
+
+                            <View style={{
+                                height: 300,
+                                margin: '0.5%',
+                                backgroundColor: COLORS.white,
+                                padding: 20,
+                                borderRadius: SIZES.radius,
+                            }}>
+
+                                <Text style={{
+                                    textAlign: 'center',
+                                    color: COLORS.darkpurple,
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    ...FONTS.h3
+                                }}>รายละเอียด</Text>
+
+
+                                <View style={{
+                                    flex: 1,
+                                }}>
+                                    <Text style={{
+                                        textAlign: 'center',
+                                        color: COLORS.lightGray2,
+                                        marginBottom: 10,
+                                        ...FONTS.h4
+                                    }}>คุณเตชิตธนโชติ (ID: 11192020)</Text>
+
+                                    <Text style={{
+                                        textAlign: 'center',
+                                        marginBottom: 10,
+                                        color: COLORS.lightGray2,
+                                        ...FONTS.h4
+                                    }}>ระยะการเดินทางทั้งหมด 50 กม.</Text>
+
+                                    <Text style={{
+                                        textAlign: 'center',
+                                        marginBottom: 10,
+                                        color: COLORS.lightGray2,
+                                        ...FONTS.h4
+                                    }}>ชำระค่าบริการ 250 บาท</Text>
+
+                                </View>
+
+                                <View style={{
+                                    flex: 1,
+                                    justifyContent: 'flex-end'
+                                }}>
+                                    <TouchableWithoutFeedback onPress={() => this.updateFilter()}>
+                                        <View style={{
+                                            borderRadius: SIZES.radius - 5,
+                                            backgroundColor: COLORS.primary,
+                                            padding: SIZES.padding * 1.5,
+                                            marginBottom: SIZES.margin - 20,
+                                        }}>
+                                            <Text style={{
+                                                textAlign: 'center',
+                                                color: COLORS.white,
+                                                ...FONTS.h5
+                                            }}>ยืนยัน</Text>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                </View>
+
+                            </View>
+
+                        </Modal>
+
+
                         <MapView
                             style={{ flex: 1 }}
                             provider={PROVIDER_GOOGLE}
                             showsUserLocation={true}
                             initialRegion={this.state.coordinates}
-                            //region={this.state.coordinates}
+                        //region={this.state.coordinates}
                         >
-                        
 
-                        
-                        {//this.state.bookingPassengers.length>0 &&
-                        this.state.bookingPassengers!==null &&
-                            this.state.bookingPassengers
-                            .filter(bookingPassengers => bookingPassengers.id !== undefined)
-                            .map(
-                            (passenger, index) => (
-                                <Marker
-                                key={index}
-                                coordinate={
-                                    {
-                                    latitude: passenger.latitude,
-                                    longitude: passenger.longitude,
-                                }}>
-                                <Image source={images.passenger_icon} style={{...MAPS.markerSize}}></Image> 
-                                </Marker>
-                            ))}
+
+
+                            {//this.state.bookingPassengers.length>0 &&
+                                this.state.bookingPassengers !== null &&
+                                this.state.bookingPassengers
+                                    .filter(bookingPassengers => bookingPassengers.id !== undefined)
+                                    .map(
+                                        (passenger, index) => (
+                                            <Marker
+                                                key={index}
+                                                coordinate={
+                                                    {
+                                                        latitude: passenger.latitude,
+                                                        longitude: passenger.longitude,
+                                                    }}>
+                                                <Image source={images.passenger_icon} style={{ ...MAPS.markerSize }}></Image>
+                                            </Marker>
+                                        ))}
 
                         </MapView>
 

@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { View, TouchableWithoutFeedback, Text, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { SIZES, COLORS, FONTS } from '../constants';
 
@@ -25,8 +26,12 @@ class DriverInformation extends Component {
         return this.props.driver;
     }
 
-    getAvaliableSeat = (carId) => {
-        axios.post("/cars/availableSeat/" + carId).then((e) => {
+    getAvaliableSeat = async (carId) => {
+        axios.post("/cars/availableSeat/" + carId, {}, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
+        }).then((e) => {
             if(e.data !== -1) {
                 this.setState({ availableSeat: e.data })
             }

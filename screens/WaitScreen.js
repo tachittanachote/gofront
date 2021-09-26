@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { HorizontalLine, Note, DriverInformation } from '../components';
 
@@ -25,11 +26,15 @@ class WaitScreen extends Component {
         clearInterval(this.updateCurrentLocationInterval);
     }
 
-    handleCancelCall() {
+    async handleCancelCall() {
         axios.post("/cars/cancelCall", {
             carId: this.props.route.params.driver.carId,
             user: {
-                id: this.context.user.id,
+                id: this.context.user.user_id,
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
             if(e.data === "success") {
@@ -42,14 +47,18 @@ class WaitScreen extends Component {
 
     handleConfirm() {
         Geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 axios.post("/cars/confirm", {
                     carId: this.props.route.params.driver.carId,
                     user: {
-                        id: this.context.user.id,
+                        id: this.context.user.user_id,
                         startLat: position.coords.latitude,
                         startLong: position.coords.longitude,
                         name: this.context.user.first_name,
+                    }
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
                     }
                 }).then((e) => {
                     if(e.data === "success") {
@@ -71,12 +80,16 @@ class WaitScreen extends Component {
     
     updateCurrentLocation = () =>{
         Geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 axios.post("/location/PassengerCurrentLocation", {
-                    passengerId: this.context.user.id,
+                    passengerId: this.context.user.user_id,
                     currentPosition: {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude
+                    }
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
                     }
                 }).then((e) => {
                     if (e.data === "success") {

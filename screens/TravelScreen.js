@@ -3,10 +3,11 @@ import { View, Text, SafeAreaView, StyleSheet, TouchableWithoutFeedback } from '
 import _ from 'lodash';
 import Geolocation from '@react-native-community/geolocation';
 
-import { DriverInformation, HorizontalLine, Title } from '../components';
+import { HorizontalLine, Title } from '../components';
 import { COLORS, FONTS, SIZES } from '../constants';
 import axios from 'axios';
 import { UserContext } from '../context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class TravelScreen extends Component {
 
@@ -56,7 +57,7 @@ class TravelScreen extends Component {
         clearInterval(this.invoiceInterval);
     }
 
-    getBill = () => {
+    getBill = async () => {
         console.log("Getting bill from carid", this.props.route.params.driver.carId)
         axios.post("/invoices/check", {
             driver: {
@@ -64,6 +65,10 @@ class TravelScreen extends Component {
             },
             passenger: {
                 id: this.context.user.id
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
             console.log(e.data)
@@ -76,11 +81,15 @@ class TravelScreen extends Component {
         })
     }
 
-    payInvoice = () => {
+    payInvoice = async () => {
         axios.post("/invoices/confirm", {
             carId: this.props.route.params.driver.carId,
             user: {
                 id: this.context.user.id,
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
             if (e.data === "success") {
@@ -91,11 +100,15 @@ class TravelScreen extends Component {
         })
     }
 
-    getRemainingDistance(origin, destination) {
+    async getRemainingDistance(origin, destination) {
         axios.post('/location/calculate', {
             coordinates: {
                 origin: origin,
                 destination: destination,
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
             this.setState({ remainDistance: e.data.distance });
@@ -104,10 +117,14 @@ class TravelScreen extends Component {
         })
     }
 
-    getPlaceDestinationName = () => {
+    getPlaceDestinationName = async () => {
         console.log(this.props.route.params.driverTravelInfo)
         axios.post('/location/place', {
             coordinates: this.props.route.params.driverTravelInfo.destination
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
         }).then((e) => {
 
             var address = e.data.formatted_address.split(",")

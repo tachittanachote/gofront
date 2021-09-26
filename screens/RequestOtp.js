@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -22,56 +23,57 @@ class RequestOtp extends Component {
         "ใส่หมายเลขโทรศัพท์มือถือของคุณ"
       ],
       errorText: null,
-      inputPhoneNumber: null,
-      isWrongNumber: true,
-      isNoNumber: true,
+      inputPhoneNumber: '',
     }
   }
 
-  checkTextInput() {
-    if (this.state.inputPhoneNumber == null) {
-      this.setState({ errorText: this.state.errorMessage[1] })
-    } else if (!this.state.inputPhoneNumber.startsWith("0") | this.state.inputPhoneNumber.length !== 10) {
-      this.setState({ errorText: this.state.errorMessage[0] })
+  checkTextInput = () => {
+    if(this.state.inputPhoneNumber.length === 0 || this.state.inputPhoneNumber.length !== 10 ) {
+     this.setState({ errorText: this.state.errorMessage[0] })
+     return false;
     }
+    if(this.state.inputPhoneNumber.charAt(0) !== "0" || this.state.inputPhoneNumber.charAt(1) === "0") {
+      this.setState({ errorText: this.state.errorMessage[0] })
+      return false;
+    }
+    return true;
   }
 
   async requestOtp() {
+    if(!this.checkTextInput()) return false;
     console.log("get in request otp", this.state.inputPhoneNumber, await AsyncStorage.getItem("device_token"))
-    if (this.state.inputPhoneNumber !== null) {
-      if (this.state.inputPhoneNumber.startsWith("0") & this.state.inputPhoneNumber.length == 10) {
 
-        axios.post('/otp/request', {
-          phone_number: this.state.inputPhoneNumber
-        },
-          {
-            headers:
-              { authorization: "Bearer "+await AsyncStorage.getItem("device_token")}
-          }).
-          then((e) => {
-            console.log(e.data,"request OTP using device token")
-                          if(e.data.status==="success"){
-                            AsyncStorage.setItem("referenceCode",e.data.ref)
-                            this.props.navigation.navigate('ConfirmOtp')
-                              }else{
-                                alert("something went wrong")
-                              }
-          }).catch((e) => {
-            console.log(e)
+    axios.post('/otp/request', {
+      phone_number: this.state.inputPhoneNumber
+    },
+      {
+        headers:
+          { authorization: "Bearer " + await AsyncStorage.getItem("device_token") }
+      }).
+      then((e) => {
+        console.log(e.data, "request OTP using device token")
+        if (e.data.status === "success") {
+          AsyncStorage.setItem("referenceCode", e.data.ref)
+          this.props.navigation.navigate('ConfirmOtp',{
+            phoneNumber: this.state.inputPhoneNumber,
           })
-
-      } else {
-        this.checkTextInput()
-      }
-    } else {
-      this.checkTextInput()
-    }
-
+        } else {
+          Alert.alert("ERROR", "ไม่สามารถดำเนินการได้")
+        }
+      }).catch((e) => {
+        console.log(e)
+      })
 
 
   }
 
   onChangeText(text) {
+    if (text.length === 0) {
+      return this.setState({ errorText: this.state.errorMessage[1] })
+    }
+    else {
+      this.setState({ errorText: null })
+    }
     this.setState({ inputPhoneNumber: text })
   }
 
@@ -138,7 +140,6 @@ class RequestOtp extends Component {
             placeholder="098 888 8888"
             keyboardType="number-pad"
             maxLength={10}
-            value={this.state.inputPhoneNumber}
             autoFocus={true}
             onChangeText={(value) => this.onChangeText(value)
             }

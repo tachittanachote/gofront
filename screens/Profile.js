@@ -8,6 +8,7 @@ import { CircleMenu } from '../components';
 import DatePicker from 'react-native-date-picker'
 import { SIZES, COLORS, FONTS } from '../constants';
 import { UserContext } from '../context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Profile extends Component {
 
@@ -28,9 +29,13 @@ class Profile extends Component {
 
     }
 
-    setDefaultUserProfile = () => {
+    setDefaultUserProfile = async () => {
         axios.post('/profile', {
             user: { user_id: this.context.user.user_id }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
         }).then((e) => {
             console.log(e)
             var profile = e.data
@@ -50,7 +55,7 @@ class Profile extends Component {
 
     }
 
-    updateUserInfo = () => {
+    updateUserInfo = async () => {
 
         axios.post('/profile/update', {
             user: {
@@ -61,6 +66,10 @@ class Profile extends Component {
                 phone_number: this.state.phone_number,
                 gender: this.state.gender,
                 date_of_birth: this.state.date_of_birth
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
             if (e.data === 'success') {
@@ -79,22 +88,17 @@ class Profile extends Component {
 
     }
 
-    handleProfileEdit = () => {
+    handleProfileEdit = async () => {
+        console.log("edit")
         if (this.state.editState === false) {
-            /*     this.setState({
-                         editState: true,
-                         first_name: this.context.user.first_name,
-                         last_name: this.context.user.last_name,
-                         email: this.context.user.email,
-                         phone_number: this.context.user.phone_number,
-                         gender: this.context.user.gender,
-                         date_of_birth: this.context.user.date_of_birth
-                     })
-                 */
             axios.post('/profile', {
                 user: { user_id: this.context.user.user_id }
+            }, {
+                headers: {
+                    authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                }
             }).then((e) => {
-                console.log(e)
+                console.log(e.data)
                 var profile = e.data
                 this.setState({
                     editState: true,
@@ -108,14 +112,19 @@ class Profile extends Component {
             }).catch((e) => {
                 console.log(e)
             })
-
-            /*this.setDefaultUserProfile*/
-
-
         } else {
             this.setState({ editState: false })
             console.log("false")
         }
+    }
+
+    handleLogout() {
+        AsyncStorage.getAllKeys()
+        .then(keys => AsyncStorage.multiRemove(keys))
+        .then(() => {
+            this.props.navigation.navigate("Home")
+        });
+        
     }
 
 
@@ -166,7 +175,8 @@ class Profile extends Component {
                 <ScrollView>
                     <View style={{
                         flex: 1,
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        paddingBottom: '20%'
                     }}>
                         <View style={{
                             marginTop: SIZES.margin * 2,
@@ -278,7 +288,7 @@ class Profile extends Component {
                                 </View>
                             </TouchableWithoutFeedback>
                         }
-                        <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate("Home")}>
+                        <TouchableWithoutFeedback onPress={() => this.handleLogout()}>
                             <View style={{
                                 borderRadius: SIZES.radius - 5,
                                 backgroundColor: COLORS.lightRed,
@@ -303,7 +313,7 @@ class Profile extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.white
+        backgroundColor: COLORS.white,
     },
     headerBackground: {
         height: SIZES.height * (25 / 100),

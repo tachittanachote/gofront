@@ -9,6 +9,7 @@ import { BackButton, HorizontalLine, Note, Preload, DriverInformation, Title, Pa
 import { COLORS, FONTS, GOOGLE_API_KEY, images, MAPS, SIZES } from '../constants';
 import axios from 'axios';
 import { UserContext } from '../context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 class PassengerScreen extends PureComponent {
@@ -33,12 +34,18 @@ class PassengerScreen extends PureComponent {
         this.getNote = this.getNote.bind(this);
     }
 
-    componentDidMount = () => {
-        axios.post('/cars').then((e) => {
+    componentDidMount = async () => {
+        axios.post('/cars', {}, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
+        }).then((e) => {
 
             this.setState({ carList: e.data });
 
             e.data.map((car, index) => {
+
+                console.log(car)
 
                 var carInfo = {
                     carId: car.car.carId
@@ -118,7 +125,7 @@ class PassengerScreen extends PureComponent {
         var driver = this.findCarInfo(carId);
 
         Geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 axios.post('/cars/call', {
                     user: {
                         id: this.context.user.id,
@@ -126,6 +133,10 @@ class PassengerScreen extends PureComponent {
                         longitude: position.coords.longitude,
                     },
                     carId: carId
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                    }
                 }).then((e) => {
                     console.log("Call", e.data)
                     if (e.data === "success") {
@@ -145,11 +156,15 @@ class PassengerScreen extends PureComponent {
         );
     }
 
-    getTravelInfo(origin, destination) {
+    async getTravelInfo(origin, destination) {
         axios.post('/location/calculate', {
             coordinates: {
                 origin: origin,
                 destination: destination,
+            }
+        }, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
             var driver = this.findCarInfo(this.state.selectedCarId);
