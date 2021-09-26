@@ -64,7 +64,7 @@ class TravelScreen extends Component {
                 id: this.props.route.params.driver.carId,
             },
             passenger: {
-                id: this.context.user.id
+                id: this.context.user.user_id
             }
         }, {
             headers: {
@@ -85,7 +85,7 @@ class TravelScreen extends Component {
         axios.post("/invoices/confirm", {
             carId: this.props.route.params.driver.carId,
             user: {
-                id: this.context.user.id,
+                id: this.context.user.user_id,
             }
         }, {
             headers: {

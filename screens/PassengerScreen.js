@@ -128,7 +128,7 @@ class PassengerScreen extends PureComponent {
             async (position) => {
                 axios.post('/cars/call', {
                     user: {
-                        id: this.context.user.id,
+                        id: this.context.user.user_id,
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                     },
