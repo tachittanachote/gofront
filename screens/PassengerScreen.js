@@ -28,18 +28,54 @@ class PassengerScreen extends PureComponent {
             carList: null,
             mapViewDirection: null,
             travelInfo: null,
-            selectedCarId: null
+            selectedCarId: null,
+            filterOptions: {
+                seats: 4,
+                gender: 'none'
+            }
         }
         this.getDriverInformation = this.getDriverInformation.bind(this);
         this.getNote = this.getNote.bind(this);
+        this.onFilterCallback = this.onFilterCallback.bind(this);
     }
 
     componentDidMount = async () => {
-        axios.post('/cars', {}, {
+
+        this.fetchAvailableCars()
+        requestGeolocationPermission().then((e) => {
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    this.setState({ coordinates: getDeltaCoordinates(position.coords.latitude, position.coords.longitude, position.coords.accuracy) });
+                },
+                (error) => {
+                    console.log(error.code, error.message);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+        })
+    }
+
+    async fetchAvailableCars() {
+
+        console.log("Fetch!!!!")
+
+        var options = {
+            gender: this.state.filterOptions.gender, 
+            seats: this.state.filterOptions.seats
+        }
+
+        this.setState({ drivers: [], carLocations: [] });
+
+        axios.post('/cars', {
+            options
+        }
+        ,{
             headers: {
                 authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
             }
         }).then((e) => {
+
+            console.log("Fetched Cars", e.data)
 
             this.setState({ carList: e.data });
 
@@ -58,17 +94,6 @@ class PassengerScreen extends PureComponent {
             })
         }).catch((e) => {
             console.log(e)
-        })
-        requestGeolocationPermission().then((e) => {
-            Geolocation.getCurrentPosition(
-                (position) => {
-                    this.setState({ coordinates: getDeltaCoordinates(position.coords.latitude, position.coords.longitude, position.coords.accuracy) });
-                },
-                (error) => {
-                    console.log(error.code, error.message);
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            );
         })
     }
 
@@ -202,13 +227,17 @@ class PassengerScreen extends PureComponent {
         return this.state.mapViewDirection;
     }
 
-
+    onFilterCallback = (data) => {
+        this.setState({ filterOptions: data }, () => {
+            this.fetchAvailableCars()
+        })
+    }
 
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <BackButton navigation={this.props.navigation}></BackButton>
-                <PassengerFilter></PassengerFilter>
+                <PassengerFilter onFilterCallback={(filteredData) => this.onFilterCallback(filteredData)}></PassengerFilter>
                 {this.state.coordinates === null ?
                     <Preload></Preload>
                     :

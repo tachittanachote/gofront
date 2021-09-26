@@ -19,6 +19,7 @@ class PassengerFilter extends Component {
             highestAge: 100,
             gender: 'none',
             rangeFilter: false,
+            seatCount: 3,
         }
     }
 
@@ -38,8 +39,17 @@ class PassengerFilter extends Component {
         this.setState({ gender: gender })
     }
 
+    handleSeatCount = (count) => {
+        this.setState({ seatCount: count });
+    }
+
     updateFilter = () => {
-        //Axios post data
+        var data = {
+            seats: parseInt(this.state.seatCount),
+            gender: this.state.gender
+        }
+        this.toggleFilter()
+        return this.props.onFilterCallback(data);
     }
 
     handleRangeToggle() {
@@ -106,9 +116,15 @@ class PassengerFilter extends Component {
                                 color: COLORS.lightGray2,
                                 ...FONTS.h4
                             }}>จำนวนที่ว่าง</Text>
-                            <TextInput keyboardType="default" placeholder="0"></TextInput>
+                            <TextInput 
+                            keyboardType="numeric" 
+                            defaultValue={String(this.state.seatCount)}
+                            onChangeText={(text) => this.handleSeatCount(text) }
+                            >
 
-                            <Text style={{
+                            </TextInput>
+
+                            {/* <Text style={{
                                 marginBottom: 10,
                                 color: COLORS.lightGray2,
                                 ...FONTS.h4
@@ -148,7 +164,7 @@ class PassengerFilter extends Component {
                                         </View>
                                     </TouchableWithoutFeedback>
                                 </>
-                            }
+                            } */}
 
 
                             <Text style={{
@@ -181,7 +197,7 @@ class PassengerFilter extends Component {
                                         textAlign: 'center',
                                         color: COLORS.white,
                                         ...FONTS.h5
-                                    }}>บันทึกการตั้งค่า</Text>
+                                    }}>ค้นหา</Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback onPress={() => this.toggleFilter()}>

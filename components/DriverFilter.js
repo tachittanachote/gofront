@@ -39,7 +39,13 @@ class DriverFilter extends Component {
     }
 
     updateFilter = () => {
-        //Axios post data
+        this.toggleFilter()
+
+        var data = {
+            gender: this.state.gender
+        }
+
+        return this.props.onFilterCallback(data)
     }
 
     handleRangeToggle() {
@@ -103,13 +109,8 @@ class DriverFilter extends Component {
                         <View style={{
                             flex: 1,
                         }}>
-                            <Text style={{
-                                color: COLORS.lightGray2,
-                                ...FONTS.h4
-                            }}>จำนวนที่ว่าง</Text>
-                            <TextInput keyboardType="default" placeholder="0"></TextInput>
 
-                            <Text style={{
+                            {/* <Text style={{
                                 marginBottom: 10,
                                 color: COLORS.lightGray2,
                                 ...FONTS.h4
@@ -149,7 +150,7 @@ class DriverFilter extends Component {
                                         </View>
                                     </TouchableWithoutFeedback>
                                 </>
-                            }
+                            } */}
 
 
                             <Text style={{

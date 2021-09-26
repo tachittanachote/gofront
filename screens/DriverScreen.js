@@ -11,6 +11,7 @@ import { COLORS, FONTS, GOOGLE_API_KEY, images, MAPS, SIZES } from '../constants
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import UserContext from '../context/UserProvider';
+import Modal from "react-native-modal";
 
 class DriverScreen extends PureComponent {
 
@@ -25,6 +26,12 @@ class DriverScreen extends PureComponent {
             mapRef: null,
             mapViewDirection: null,
             nearbyPlace: [],
+            filterOptions: {
+                gender: 'none'
+            },
+            availableSeat: 3,
+            popupState: false,
+            seatError: false
         }
     }
 
@@ -194,11 +201,14 @@ class DriverScreen extends PureComponent {
                 destinationLat: this.state.destination?.latitude ? this.state.destination?.latitude : this.state.destination.geometry.location.lat,
                 destinationLong: this.state.destination?.longitude ? this.state.destination.longitude : this.state.destination.geometry.location.lng,
                 carInfo: {
-                    registration: "AB123", //Context  
-                    color: "Black",     //Context  
-                    model: "BMW", //Context  
-                    seat: 4 //Context  
+                    registration: "AB123", //Database  
+                    color: "Black",     //Database  
+                    model: "BMW", //Database  
+                    seat: this.state.availableSeat
                 }
+            },
+            filters: {
+                gender: this.state.filterOptions.gender
             }
         }, {
             headers: {
@@ -214,11 +224,114 @@ class DriverScreen extends PureComponent {
         })
     }
 
+    onFilterCallback(data) {
+        this.setState({ gender: data });
+    }
+
+    toggleStartPopup() {
+        if(this.state.popupState) {
+            this.setState({ popupState: false });
+        }else {
+            this.setState({ popupState: true });
+        }
+    }
+
+    handleAvailableSeat(text) {
+        if(text.length === 0) {
+            this.setState({ seatError: true})
+        } else {
+            this.setState({ availableSeat: parseInt(text), seatError: false })
+        }
+    }
+
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <BackButton navigation={this.props.navigation}></BackButton>
-                <DriverFilter></DriverFilter>
+                <DriverFilter onFilterCallback={(filterData) => this.onFilterCallback(filterData)}></DriverFilter>
+
+                <Modal
+                    isVisible={this.state.popupState}
+                    animationIn="slideInDown"
+                    animationOut="slideOutUp"
+                >
+                    <View style={{
+                        flex: 1,
+                        margin: '0.5%',
+                        backgroundColor: COLORS.white,
+                        padding: 20,
+                        borderRadius: SIZES.radius,
+                    }}>
+
+                        <View style={{
+                            flex: 1,
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+
+                            <Text style={{
+                                color: COLORS.darkpurple,
+                                ...FONTS.h3
+                            }}>จำนวนที่ว่างที่จะรับ</Text>
+                            <TextInput 
+                            autoFocus={true}
+                            maxLength={1}
+                            keyboardType="number-pad" 
+                            defaultValue={String(this.state.availableSeat)}
+                            onChangeText={(text) => this.handleAvailableSeat(text)}
+                            style={{
+                                ...FONTS.h2
+                            }}
+                            >
+                            </TextInput>
+
+                            {this.state.seatError &&
+                            <Text style={{
+                                color: COLORS.red,
+                                ...FONTS.body3
+                            }}>โปรดระบุจำนวนที่ต้องการรับ</Text>
+                            }
+
+                        </View>
+
+                        <View style={{
+                            flex: 1,
+                            justifyContent: 'flex-end'
+                        }}>
+                            <TouchableWithoutFeedback onPress={() => this.handleStart()}>
+                                <View style={{
+                                    borderRadius: SIZES.radius - 5,
+                                    backgroundColor: COLORS.primary,
+                                    padding: SIZES.padding * 1.5,
+                                    marginBottom: SIZES.margin - 20,
+                                }}>
+                                    <Text style={{
+                                        textAlign: 'center',
+                                        color: COLORS.white,
+                                        ...FONTS.h5
+                                    }}>เริ่มการเดินทาง</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={() => this.toggleStartPopup()}>
+                                <View style={{
+                                    borderRadius: SIZES.radius - 5,
+                                    backgroundColor: COLORS.lightRed,
+                                    padding: SIZES.padding * 1.5,
+                                    marginTop: SIZES.margin,
+                                    marginBottom: SIZES.margin - 5,
+                                }}>
+                                    <Text style={{
+                                        textAlign: 'center',
+                                        color: COLORS.red,
+                                        ...FONTS.h5
+                                    }}>ยกเลิก</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+
+                    </View>
+                </Modal>
+
                 {this.state.coordinates === null ?
                     <Preload></Preload>
                     :
@@ -375,7 +488,7 @@ class DriverScreen extends PureComponent {
                                         }}>ยกเลิก</Text>
                                     </View>
                                 </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback onPress={() => this.handleStart()}>
+                                <TouchableWithoutFeedback onPress={() => this.toggleStartPopup()}>
                                     <View style={{
                                         borderRadius: SIZES.radius - 5,
                                         backgroundColor: COLORS.primary,
