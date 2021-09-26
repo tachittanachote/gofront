@@ -113,7 +113,11 @@ class DrivingScreen extends Component {
 
     dropPassenger = async (passengerId) => {
 
-        var user = await axios.post("/user/" + passengerId);
+        var user = await axios.post("/user/" + passengerId, {}, {
+            headers: {
+                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+            }
+        });
 
         console.log("DropUserID", user.data),
 
