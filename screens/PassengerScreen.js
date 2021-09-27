@@ -33,7 +33,9 @@ class PassengerScreen extends PureComponent {
                 seats: 4,
                 gender: 'none'
             }
+            
         }
+        //this.fetchCarInterval = null;
         this.getDriverInformation = this.getDriverInformation.bind(this);
         this.getNote = this.getNote.bind(this);
         this.onFilterCallback = this.onFilterCallback.bind(this);
@@ -41,6 +43,7 @@ class PassengerScreen extends PureComponent {
 
     componentDidMount = async () => {
 
+        //this.fetchCarInterval = setInterval(this.fetchAvailableCars, 5000);
         this.fetchAvailableCars()
         requestGeolocationPermission().then((e) => {
             Geolocation.getCurrentPosition(
@@ -55,7 +58,7 @@ class PassengerScreen extends PureComponent {
         })
     }
 
-    async fetchAvailableCars() {
+    fetchAvailableCars = async () => {
 
         console.log("Fetch!!!!")
 
@@ -233,6 +236,10 @@ class PassengerScreen extends PureComponent {
         })
     }
 
+    componentWillUnmount() {
+        //clearInterval(this.fetchCarInterval);
+    }
+
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
@@ -298,6 +305,15 @@ class PassengerScreen extends PureComponent {
                                     {this.state.drivers.length > 0 && this.state.drivers.map((driver, index) => (
                                         <DriverInformation key={index} driver={driver} onCallBack={(e) => this.getDriverInformation(e)} availableSeat></DriverInformation>
                                     ))}
+                                    {this.state.drivers.length === 0 && 
+                                    <View style={{
+                                        flex: 1,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <Text>ไม่พบผู้ขับขี่ในขณะนี้</Text>
+                                    </View>
+                                    }
                                 </ScrollView>
                             </View>
 

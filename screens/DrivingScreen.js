@@ -346,7 +346,7 @@ class DrivingScreen extends Component {
 
                             {//this.state.bookingPassengers.length>0 &&
                                 this.state.bookingPassengers !== null &&
-                                this.state.bookingPassengers
+                                this.state?.bookingPassengers
                                     .filter(bookingPassengers => bookingPassengers.id !== undefined)
                                     .map(
                                         (passenger, index) => (

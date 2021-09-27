@@ -190,7 +190,7 @@ class DriverScreen extends PureComponent {
 
     handleStart = async () => {
 
-        console.log("Start!!!")
+        console.log("Start!!!", this.state.availableSeat)
         
         axios.post("/cars/start", {
             driver: {
@@ -225,7 +225,10 @@ class DriverScreen extends PureComponent {
     }
 
     onFilterCallback(data) {
-        this.setState({ gender: data });
+        this.setState({ filterOptions: data }, () => {
+            console.log(data)
+        });
+        
     }
 
     toggleStartPopup() {
