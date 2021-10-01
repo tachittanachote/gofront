@@ -9,6 +9,7 @@ import DatePicker from 'react-native-date-picker'
 import { SIZES, COLORS, FONTS } from '../constants';
 import { UserContext } from '../context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import validator from 'validator'
 
 class Profile extends Component {
 
@@ -23,7 +24,9 @@ class Profile extends Component {
             phone_number: null,
             gender: null,
             date_of_birth: null,
-            date_picker_state: false
+            date_picker_state: false,
+            emailErrorText: null,
+            phoneNumberErrorText: null
         }
 
 
@@ -56,36 +59,60 @@ class Profile extends Component {
     }
 
     updateUserInfo = async () => {
+        var correct = true;
+        var correctEmail = true;
+        var correctPhoneNumber = true;
 
-        axios.post('/profile/update', {
-            user: {
-                user_id: this.context.user.user_id,
-                first_name: this.state.first_name,
-                last_name: this.state.last_name,
-                email: this.state.email,
-                phone_number: this.state.phone_number,
-                gender: this.state.gender,
-                date_of_birth: this.state.date_of_birth
+        if (this.state.first_name === null || this.state.first_name === "") this.setState({ first_name: this.context.user.first_name }); correct = false
+        if (this.state.last_name === null || this.state.last_name === "") this.setState({ last_name: this.state.last_name }); correct = false
+
+        if (!validator.isEmail(this.state.email)) { this.setState({ emailErrorText: "please enter new email with correct format" }); correctEmail = false; correct = false }
+        if (validator.isEmail(this.state.email)) { correctEmail = true; this.setState({ emailErrorText: null }) }
+
+        if (this.state.phone_number.length !== 10 || this.state.phone_number.charAt(0) !== "0") { this.setState({ phoneNumberErrorText: "please start with 0 or make sure it is 10 digits" }); correctPhoneNumber = false; correct = false }
+        if (!(this.state.phone_number.length !== 10 || this.state.phone_number.charAt(0) !== "0")) { correctPhoneNumber = true; correct = true; this.setState({ phoneNumberErrorText: null }) }
+
+        if (this.state.gender === null || this.state.gender === "") this.setState({ gender: this.context.user.gender }); correct = false
+        if (this.state.date_of_birth === null || this.state.date_of_birth === "") this.setState({ date_of_birth: this.context.user.date_of_birth }); correct = false
+
+        if (!(this.state.first_name === null || this.state.first_name === "") && !(this.state.last_name === null || this.state.last_name === "")
+            && correctEmail === true && correctPhoneNumber === true && !(this.state.gender === null || this.state.gender === "")
+            && !(this.state.date_of_birth === null || this.state.date_of_birth === "")){
+            correct=true
             }
-        }, {
-            headers: {
-                authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+        
+        console.log(correct, "phoneNumber:", correctPhoneNumber, "email:", correctEmail)
+
+            if (correct === true & correctPhoneNumber === true & correctEmail === true) {
+                axios.post('/profile/update', {
+                    user: {
+                        user_id: this.context.user.user_id,
+                        first_name: this.state.first_name,
+                        last_name: this.state.last_name,
+                        email: this.state.email,
+                        phone_number: this.state.phone_number,
+                        gender: this.state.gender,
+                        date_of_birth: this.state.date_of_birth
+                    }
+                }, {
+                    headers: {
+                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                    }
+                }).then((e) => {
+                    if (e.data === 'success') {
+                        //console.log(this.context)
+                        this.context.updateContext()
+                        this.setState({ editState: false })
+                    } else {
+                        alert("error, something went wrong")
+                    }
+
+                }).catch((e) => {
+                    console.log(e)
+                })
+
+
             }
-        }).then((e) => {
-            if (e.data === 'success') {
-                //console.log(this.context)
-                this.context.updateContext()
-                this.setState({ editState: false })
-            } else {
-                alert("error, something went wrong")
-            }
-
-        }).catch((e) => {
-            console.log(e)
-        })
-
-
-
     }
 
     handleProfileEdit = async () => {
@@ -120,11 +147,11 @@ class Profile extends Component {
 
     handleLogout() {
         AsyncStorage.getAllKeys()
-        .then(keys => AsyncStorage.multiRemove(keys))
-        .then(() => {
-            this.props.navigation.navigate("Home")
-        });
-        
+            .then(keys => AsyncStorage.multiRemove(keys))
+            .then(() => {
+                this.props.navigation.navigate("Home")
+            });
+
     }
 
 
@@ -217,6 +244,11 @@ class Profile extends Component {
                                         placeholder="email"
                                         keyboardType="default"
                                     />
+                                    <Text style={{
+                                        color: COLORS.red,
+                                        marginBottom: SIZES.marginBottom,
+                                        ...FONTS.body3
+                                    }}>{this.state.emailErrorText}</Text>
                                     <TextInput
                                         style={styles.info}
                                         onChangeText={(text) => this.setState({ phone_number: text })}
@@ -224,6 +256,11 @@ class Profile extends Component {
                                         placeholder="phone number"
                                         keyboardType="default"
                                     />
+                                    <Text style={{
+                                        color: COLORS.red,
+                                        marginBottom: SIZES.marginBottom,
+                                        ...FONTS.body3
+                                    }}>{this.state.phoneNumberErrorText}</Text>
                                     <View style={styles.info}>
                                         <Picker
                                             selectedValue={this.state.gender}
