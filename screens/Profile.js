@@ -22,11 +22,13 @@ class Profile extends Component {
             last_name: null,
             email: null,
             phone_number: null,
+            emergency_phone_number,
             gender: null,
             date_of_birth: null,
             date_picker_state: false,
             emailErrorText: null,
-            phoneNumberErrorText: null
+            phoneNumberErrorText: null,
+            emergencyPhoneNumberErrorText: null
         }
 
 
@@ -49,7 +51,8 @@ class Profile extends Component {
                 email: profile.email,
                 phone_number: profile.phone_number,
                 gender: profile.gender,
-                date_of_birth: profile.date_of_birth
+                date_of_birth: profile.date_of_birth,
+                emergency_phone_number: profile.emergency_phone_number
             })
         }).catch((e) => {
             console.log(e)
@@ -62,6 +65,7 @@ class Profile extends Component {
         var correct = true;
         var correctEmail = true;
         var correctPhoneNumber = true;
+        var correctEmergencyPhoneNumber = true;
 
         if (this.state.first_name === null || this.state.first_name === "") this.setState({ first_name: this.context.user.first_name }); correct = false
         if (this.state.last_name === null || this.state.last_name === "") this.setState({ last_name: this.state.last_name }); correct = false
@@ -72,47 +76,52 @@ class Profile extends Component {
         if (this.state.phone_number.length !== 10 || this.state.phone_number.charAt(0) !== "0") { this.setState({ phoneNumberErrorText: "please start with 0 or make sure it is 10 digits" }); correctPhoneNumber = false; correct = false }
         if (!(this.state.phone_number.length !== 10 || this.state.phone_number.charAt(0) !== "0")) { correctPhoneNumber = true; correct = true; this.setState({ phoneNumberErrorText: null }) }
 
+        if (this.state.emergency_phone_number.length != 0) {
+            if (this.state.emergency_phone_number.length !== 10 || this.state.emergency_phone_number.charAt(0) !== "0") { this.setState({ emergencyPhoneNumberErrorText: "please start with 0 or make sure it is 10 digits" }); correctEmergencyPhoneNumber = false; correct = false }
+            if (!(this.state.emergency_phone_number.length !== 10 || this.state.emergency_phone_number.charAt(0) !== "0")) { correctEmergencyPhoneNumber = true; correct = true; this.setState({ emergencyPhoneNumberErrorText: null }) }
+        }
         if (this.state.gender === null || this.state.gender === "") this.setState({ gender: this.context.user.gender }); correct = false
         if (this.state.date_of_birth === null || this.state.date_of_birth === "") this.setState({ date_of_birth: this.context.user.date_of_birth }); correct = false
 
         if (!(this.state.first_name === null || this.state.first_name === "") && !(this.state.last_name === null || this.state.last_name === "")
             && correctEmail === true && correctPhoneNumber === true && !(this.state.gender === null || this.state.gender === "")
-            && !(this.state.date_of_birth === null || this.state.date_of_birth === "")){
-            correct=true
-            }
-        
-        console.log(correct, "phoneNumber:", correctPhoneNumber, "email:", correctEmail)
+            && !(this.state.date_of_birth === null || this.state.date_of_birth === "")) {
+            correct = true
+        }
 
-            if (correct === true & correctPhoneNumber === true & correctEmail === true) {
-                axios.post('/profile/update', {
-                    user: {
-                        user_id: this.context.user.user_id,
-                        first_name: this.state.first_name,
-                        last_name: this.state.last_name,
-                        email: this.state.email,
-                        phone_number: this.state.phone_number,
-                        gender: this.state.gender,
-                        date_of_birth: this.state.date_of_birth
-                    }
-                }, {
-                    headers: {
-                        authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
-                    }
-                }).then((e) => {
-                    if (e.data === 'success') {
-                        //console.log(this.context)
-                        this.context.updateContext()
-                        this.setState({ editState: false })
-                    } else {
-                        alert("error, something went wrong")
-                    }
+        console.log(correct, "phoneNumber:", correctPhoneNumber, "email:", correctEmail,)
 
-                }).catch((e) => {
-                    console.log(e)
-                })
+        if (correct === true & correctPhoneNumber === true & correctEmail === true & correctEmergencyPhoneNumber === true) {
+            axios.post('/profile/update', {
+                user: {
+                    user_id: this.context.user.user_id,
+                    first_name: this.state.first_name,
+                    last_name: this.state.last_name,
+                    email: this.state.email,
+                    phone_number: this.state.phone_number,
+                    gender: this.state.gender,
+                    date_of_birth: this.state.date_of_birth,
+                    emergency_phone_number: this.state.emergency_phone_number
+                }
+            }, {
+                headers: {
+                    authorization: 'Bearer ' + await AsyncStorage.getItem('session_token')
+                }
+            }).then((e) => {
+                if (e.data === 'success') {
+                    //console.log(this.context)
+                    this.context.updateContext()
+                    this.setState({ editState: false })
+                } else {
+                    alert("error, something went wrong")
+                }
+
+            }).catch((e) => {
+                console.log(e)
+            })
 
 
-            }
+        }
     }
 
     handleProfileEdit = async () => {
@@ -134,7 +143,9 @@ class Profile extends Component {
                     email: profile.email,
                     phone_number: profile.phone_number,
                     gender: profile.gender,
-                    date_of_birth: profile.date_of_birth
+                    date_of_birth: profile.date_of_birth,
+                    emergency_phone_number: emergency_phone_number
+
                 })
             }).catch((e) => {
                 console.log(e)
@@ -217,6 +228,7 @@ class Profile extends Component {
                                     <Text style={styles.info}>{this.state.last_name === null ? this.context.user.last_name : this.state.last_name}</Text>
                                     <Text style={styles.info}>{this.state.email === null ? this.context.user.email : this.state.email}</Text>
                                     <Text style={styles.info}>{this.state.phone_number === null ? this.context.user.phone_number : this.state.phone_number}</Text>
+                                    <Text style={styles.info}>{this.state.emergency_phone_number === null ? this.context.emergency_phone_number : this.state.emergency_phone_number}</Text>
                                     <Text style={styles.info}>เพศ {this.state.gender === null ? this.context.user.gender : this.state.gender}</Text>
                                     <Text style={styles.info}>วันเกิด {this.state.date_of_birth === null ? this.context.user.date_of_birth : this.state.date_of_birth}</Text>
                                 </>
@@ -261,6 +273,18 @@ class Profile extends Component {
                                         marginBottom: SIZES.marginBottom,
                                         ...FONTS.body3
                                     }}>{this.state.phoneNumberErrorText}</Text>
+                                    <TextInput
+                                        style={styles.info}
+                                        onChangeText={(text) => this.setState({ emergency_phone_number: text })}
+                                        value={this.state.emergency_phone_number}
+                                        placeholder="emergency phone number"
+                                        keyboardType="default"
+                                    />
+                                    <Text style={{
+                                        color: COLORS.red,
+                                        marginBottom: SIZES.marginBottom,
+                                        ...FONTS.body3
+                                    }}>{this.state.emergencyPhoneNumberErrorText}</Text>
                                     <View style={styles.info}>
                                         <Picker
                                             selectedValue={this.state.gender}

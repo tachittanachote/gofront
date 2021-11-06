@@ -16,6 +16,7 @@ import {
   WaitScreen,
   TravelScreen,
   DrivingScreen,
+  TestEmergencyButton
 } from './screens';
 import { UserContext } from './context';
 import axios from 'axios';
@@ -49,8 +50,8 @@ class App extends Component {
             headerShown: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
           }}
-          initialRouteName={this.context.initPage}
-          //initialRouteName="Home"
+          //initialRouteName={this.context.initPage}
+          initialRouteName="Home"
           >
           <Stack.Screen name="Home" component={requireAuth(Home)} />
           <Stack.Screen name="Login" component={Login} />
@@ -69,5 +70,5 @@ class App extends Component {
     );
   }
 }
-
+ 
 export default App;

@@ -248,7 +248,7 @@ class PassengerScreen extends PureComponent {
                 {this.state.coordinates === null ?
                     <Preload></Preload>
                     :
-                    <View style={{ flex: 1 }}>
+                    <View  style={{ flex: 1 }}>
 
                         <MapView
                             style={{ flex: 1 }}
